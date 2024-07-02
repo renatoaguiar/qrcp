@@ -321,13 +321,12 @@ func New(cfg *config.Config) (*Server, error) {
 		app.stopChannel <- true
 	}()
 	go func() {
-		netListener := tcpKeepAliveListener{listener.(*net.TCPListener)}
 		if cfg.Secure {
-			if err := httpserver.ServeTLS(netListener, cfg.TlsCert, cfg.TlsKey); err != http.ErrServerClosed {
+			if err := httpserver.ServeTLS(listener, cfg.TlsCert, cfg.TlsKey); err != http.ErrServerClosed {
 				log.Fatalln("error starting the server:", err)
 			}
 		} else {
-			if err := httpserver.Serve(netListener); err != http.ErrServerClosed {
+			if err := httpserver.Serve(listener); err != http.ErrServerClosed {
 				log.Fatalln("error starting the server", err)
 			}
 		}
